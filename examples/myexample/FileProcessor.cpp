@@ -1,4 +1,3 @@
-
 #include "FileProcessor.hpp"
 #include <QRegularExpression>
 #include <QRegularExpressionMatch>
@@ -7,9 +6,16 @@
 
 FileProcessor::FileProcessor() :
     _outputFile(QString("")) ,
+    _lineEdit(new QLineEdit()) ,
     _regex(QString("([-+]?)([\\d]{1,2})(((\\.)(\\d+)(,)))(\\s*)(([-+]?)([\\d]{1,3})((\\.)(\\d+))?)"))
 {
+    connect(_lineEdit,
+            &QLineEdit::textChanged,
+            this,
+            &FileProcessor::onTextEdited);
 
+    _lineEdit->setText(_regex);
+    _lineEdit->setMaximumSize(_lineEdit->sizeHint());
 }
 
 unsigned int FileProcessor::nPorts(QtNodes::PortType portType) const
@@ -53,8 +59,6 @@ FileProcessor::setInData
         }
     }
 
-
-
     Q_EMIT dataUpdated(0);
 }
 
@@ -73,6 +77,18 @@ QString FileProcessor::validationMessage() const
     return modelValidationError;
 }
 
+void FileProcessor::onTextEdited(const QString &string)
+{
+    qDebug() << string;
+
+    _regex = string;
+
+    // for run compute function again :: explicitly calling them does'nt work
+    setInData(_nodeData, 0);
+
+    Q_EMIT dataUpdated(0);
+}
+
 void FileProcessor::compute()
 {
     qDebug() << "RUN COMPUTE EVENT FILTER " ;
@@ -89,12 +105,12 @@ void FileProcessor::compute()
     {
         QRegularExpressionMatch match = itr.next();
 
-        _outputFile.append( "GeoLocation expresssion found at : " );
+        _outputFile.append( "Matched regex expresssion found at : " );
         _outputFile.append( QString::number(match.capturedStart()) + " index to ");
         _outputFile.append( QString::number(match.capturedEnd()) + " index ").append("\n");
-        _outputFile.append( "And The Location is : " + match.capturedTexts()[0]).append("\n");
+        _outputFile.append( "And The expression is : " + match.capturedTexts()[0]).append("\n");
     }
     if( _outputFile.isEmpty() ){
-        _outputFile.append(" No Geolocation found in this file ");
+        _outputFile.append(" No Matched regex found in this file ");
     }
 }

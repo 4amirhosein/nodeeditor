@@ -9,6 +9,8 @@
 #include <QFileInfo>
 #include <QTextStream>
 #include <QtWidgets/QLineEdit>
+#include <QProcess>
+#include <QLabel>
 #include "FileData.hpp"
 
 
@@ -23,26 +25,25 @@ using QtNodes::NodeDataModel;
 using QtNodes::NodeValidationState;
 
 
-class FileProcessor : public NodeDataModel {
+class TikaProcessor : public NodeDataModel {
     Q_OBJECT
 
 public:
-    FileProcessor();
+    TikaProcessor();
 
     QString
     caption() const override {
-        return "Text File Processor";
+        return "Tika File Processor";
     }
 
     QString
     name() const  override{
-        return "FileProcessorDataModel";
+        return "TikaProcessorDataModel";
     }
 
     unsigned int nPorts(PortType portType) const override ;
 
     NodeDataType dataType(PortType portType, PortIndex portIndex) const override;
-
 
 public :
     void setInData(std::shared_ptr<NodeData> NodeData,PortIndex port ) override;
@@ -52,7 +53,7 @@ public :
 
     virtual
     QWidget *
-    embeddedWidget() { return _lineEdit;}
+    embeddedWidget() { return _label;}
 
     NodeValidationState
     validationState() const override;
@@ -63,20 +64,25 @@ public :
 
     void compute();
 
+protected :
+    bool
+    eventFilter(QObject *object, QEvent *event) override;
+
+    void setState(QString , NodeValidationState);
+
 
 private :
+
     std::shared_ptr<NodeData> _nodeData;
+    QString _filePath;
+    QProcess * _tikaProcess;
+    QString _tikaAppPath;
     QString _outputFile;
-    QString _regex ;
-    QLineEdit * _lineEdit;
-
-
+    QLabel * _label;
     NodeValidationState modelValidationState = NodeValidationState::Warning;
-    QString modelValidationError = QString("Missing or incorrect inputs");
+    QString modelValidationError = QString("Missing file input");
 
-protected Q_SLOTS:
-    void
-    onTextEdited(QString const &string);
-
+private Q_SLOTS:
+    void processFinished();
 
 };

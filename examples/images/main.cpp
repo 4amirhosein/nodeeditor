@@ -4,6 +4,9 @@
 
 #include <QtWidgets/QApplication>
 
+#include <tesseract/baseapi.h>
+#include <leptonica/allheaders.h>
+
 #include "ImageShowModel.hpp"
 #include "ImageLoaderModel.hpp"
 
@@ -28,13 +31,14 @@ main(int argc, char *argv[])
 {
   QApplication app(argc, argv);
 
-  FlowScene scene(registerDataModels());
+//  FlowScene scene(registerDataModels());
 
-  FlowView view(&scene);
+//  FlowView view(&scene);
 
-  view.setWindowTitle("Node-based flow editor");
-  view.resize(800, 600);
-  view.show();
+//  view.setWindowTitle("Node-based flow editor");
+//  view.resize(800, 600);
+//  view.show();
+
 
   return app.exec();
 }

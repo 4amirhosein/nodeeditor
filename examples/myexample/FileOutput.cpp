@@ -28,11 +28,14 @@ QtNodes::NodeDataType FileOutput::dataType(QtNodes::PortType portType, QtNodes::
 
 void FileOutput::setInData(std::shared_ptr<QtNodes::NodeData> data, QtNodes::PortIndex port)
 {
+    qDebug() << "In FileOutput set in data";
     _nodeData = data;
     if(_nodeData){
         auto d = std::dynamic_pointer_cast<FileData>(_nodeData);
         _file = d->file();
     }
+
+    qDebug() << "IN FILEOUTPUT << " << _file;
 }
 
 std::shared_ptr<QtNodes::NodeData> FileOutput::outData(QtNodes::PortIndex port) {
@@ -47,19 +50,23 @@ FileOutput::eventFilter(QObject *object, QEvent *event ){
         if ( event->type() == QEvent::MouseButtonPress ){
 
             if (!_nodeData) {
-                qDebug() << "FileOutput.eventFilter ::  _nodeData in null ";
                 QMessageBox::warning(nullptr, tr("My Application"),
                                                tr("There is no input to save.\n"),
                                                QMessageBox::Ok );
                 return true;
             }
 
-            qDebug() << " RUN OUTPUT EVENT FILTER";
-            QString fileName = QFileDialog::getSaveFileName(nullptr,
-                tr("Save Address Book"), QDir::homePath()+ "/result.txt",
-                tr("Address Book (*.abk)All Files (*)"));
+            QString fileName = QFileDialog::getSaveFileName(
+                nullptr,
+                tr("Save Address Book"),
+                QDir::homePath()+ "/result.txt",
+                tr("Address Book (*.abk)All Files (*)")
+            );
+
             std::shared_ptr<FileData> fileData = std::dynamic_pointer_cast<FileData>(_nodeData);
+
             std::shared_ptr<QString> textFile = std::make_shared<QString>(fileData->file());
+
             try {
 
                 FileFactory fileFactory;
@@ -69,6 +76,8 @@ FileOutput::eventFilter(QObject *object, QEvent *event ){
                 qDebug() << e.what();
                 return true ;
             }
+
+            return true;
         }
     }
     return false ;

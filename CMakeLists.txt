@@ -93,6 +93,8 @@ target_link_libraries(nodes
     Qt5::Widgets
     Qt5::Gui
     Qt5::OpenGL
+    -llept
+    -ltesseract
 )
 
 target_compile_definitions(nodes
