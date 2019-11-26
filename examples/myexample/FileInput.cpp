@@ -19,7 +19,6 @@ FileInput::FileInput()
 unsigned int
 FileInput::nPorts(QtNodes::PortType portType) const
 {
-
     unsigned int result;
     switch (portType) {
     case PortType::In:
@@ -31,7 +30,6 @@ FileInput::nPorts(QtNodes::PortType portType) const
     }
     return result;
 }
-
 
 QtNodes::NodeDataType
 FileInput::

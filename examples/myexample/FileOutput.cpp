@@ -3,7 +3,6 @@ FileOutput::FileOutput()
     : _pushButton(new QPushButton("Click for saving")) ,
       _file(QString(""))
 {
-
     _pushButton->installEventFilter(this);
 }
 
@@ -28,14 +27,13 @@ QtNodes::NodeDataType FileOutput::dataType(QtNodes::PortType portType, QtNodes::
 
 void FileOutput::setInData(std::shared_ptr<QtNodes::NodeData> data, QtNodes::PortIndex port)
 {
-    qDebug() << "In FileOutput set in data";
     _nodeData = data;
     if(_nodeData){
         auto d = std::dynamic_pointer_cast<FileData>(_nodeData);
         _file = d->file();
     }
 
-    qDebug() << "IN FILEOUTPUT << " << _file;
+    qDebug() << this->name() << ":: setInData FILE  " << _file;
 }
 
 std::shared_ptr<QtNodes::NodeData> FileOutput::outData(QtNodes::PortIndex port) {
@@ -73,7 +71,7 @@ FileOutput::eventFilter(QObject *object, QEvent *event ){
                 fileFactory.writeTextFile(fileName , textFile);
 
             } catch(std::exception &e ){
-                qDebug() << e.what();
+                qDebug() << this->name() << "eventFilter :: catch ::" <<  e.what();
                 return true ;
             }
 
